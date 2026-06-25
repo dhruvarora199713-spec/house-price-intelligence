@@ -11,3 +11,5 @@ df = load_data("data/processed/outliers_handled.csv")
 
 print("\nDataset Shape")
 print(df.shape)
+
+

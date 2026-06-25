@@ -298,15 +298,11 @@ for col in features_to_cap :
     
     
 # ============================================
-
 # Step 39: Save Outlier-Handled Dataset
-
 # ============================================
 
 # Purpose:
-
 # Save dataset after
-
 # outlier treatment.
 
 df.to_csv( "data/processed/outliers_handled.csv",index=False)
