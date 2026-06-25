@@ -1,4 +1,60 @@
 # ============================================
+# Helper Function
+# ============================================
+
+# Purpose:
+# Calculate IQR lower and upper
+# bounds for a numerical feature.
+
+def calculate_iqr_bounds(df, column):
+
+    Q1 = (
+
+        df[column]
+
+        .quantile(0.25)
+
+    )
+
+    Q3 = (
+
+        df[column]
+
+        .quantile(0.75)
+
+    )
+
+    IQR = (
+
+        Q3 - Q1
+
+    )
+
+    lower_bound = (
+
+        Q1 - 1.5 * IQR
+
+    )
+
+    upper_bound = (
+
+        Q3 + 1.5 * IQR
+
+    )
+
+    return (
+        Q1,
+        Q3,
+        IQR,
+        lower_bound,
+        upper_bound
+
+    )
+
+
+
+
+# ============================================
 # Step 29: Load Cleaned Dataset
 # ============================================
 
@@ -106,29 +162,9 @@ for col in candidate_columns:
 # used to detect SalePrice outliers.
 
 for col in candidate_columns:
-    
-    Q1 = (
-        df[col]
-        .quantile(0.25)
-    )
-    
-    Q3 = (
-        df[col]
-        .quantile(0.75)
-    )
-    
-    IQR = (
-        Q3-Q1
-    )
-    
-    lower_bound = (
-        Q1 - 1.5*IQR
-    )
-     
-    upper_bound = (
-        Q3 + 1.5*IQR
-    )           
-    
+
+    Q1, Q3, IQR, lower_bound, upper_bound = ( calculate_iqr_bounds(df, col))
+
     print("\n" + "=" * 50)
 
     print(col)
@@ -144,7 +180,6 @@ for col in candidate_columns:
     print(f"Lower Bound: {lower_bound}")
 
     print(f"Upper Bound: {upper_bound}")
-    
 
 # ============================================
 # Step 35: Count Outliers
@@ -155,57 +190,125 @@ for col in candidate_columns:
 # candidate feature.
 
 for col in candidate_columns :
-    
-    Q1 = (
-        df[col]
-        .quantile(0.25)
-    )
-    
-    Q3 = (
-        df[col]
-        .quantile(0.75)
-    )
-    
-    IQR = (
-        Q3-Q1
-    )
-    
-    lower_bound = (
-        Q1 - 1.5*IQR
-    )
-     
-    upper_bound = (
-        Q3 + 1.5*IQR
-    )           
+
+    Q1, Q3, IQR, lower_bound, upper_bound = (
+        calculate_iqr_bounds(df,col)
+        )
 
     outliers = df[
+
         (df[col] < lower_bound)
+
         |
+
         (df[col] > upper_bound)
+
     ]
-    
+
     print("\n" + "=" * 50)
 
     print(col)
 
     print("=" * 50)
 
-    print(
+    print(f"Number of Outliers: {len(outliers)}")
 
-        f"Number of Outliers: {len(outliers)}"
-
-    )
-
-    print(
-
-        f"Percentage: {(len(outliers)/len(df))*100:.2f}%"
-    )
+    print(f"Percentage: {(len(outliers)/len(df))*100:.2f}%")
     
 # ============================================
-# Step 36: Inspect Outlier Rows
+# Step 36: Select Outlier Treatment Strategy
 # ============================================
 
 # Purpose:
-# View actual outlier values
-# for each candidate feature.
+# Define the outlier handling
+# strategy for each feature.
 
+outlier_treatment = {
+
+    "SalePrice": "Keep",
+
+    "LotArea": "Cap",
+
+    "GrLivArea": "Cap",
+
+    "GarageArea": "Cap",
+
+    "TotalBsmtSF": "Cap",
+
+    "1stFlrSF": "Cap"
+
+}
+
+print("\nSelected Outlier Treatment Strategy:\n")
+
+for feature , strategy in outlier_treatment.items() :
+    print(f"{feature} --> {strategy}")
+    
+# ============================================
+# Step 37: Apply IQR-Based Outlier Capping
+# ============================================
+
+# Purpose:
+# Cap outlier values using
+# the IQR lower and upper bounds.
+
+features_to_cap =[
+    "LotArea",
+    "GrLivArea",
+    "GarageArea",
+    "TotalBsmtSF",
+    "1stFlrSF"
+]
+
+for col in features_to_cap:
+    Q1,Q2,IQR,lower_bound,upper_bound =(calculate_iqr_bounds(df,col))
+    df[col]=(
+        df[col]
+        .clip(
+            lower=lower_bound,
+            upper=upper_bound
+        )
+     )
+print("\nOutlier capping completed successfully.")
+
+
+# ============================================
+# Step 38: Verify Outlier Reduction
+# ============================================
+
+# Purpose:
+# Verify that outliers have been
+# successfully capped.
+
+for col in features_to_cap :
+    Q1,Q2,IQR, lower_bound,upper_bound = (calculate_iqr_bounds(df,col))
+    outliers = df[
+        (df[col] < lower_bound)
+    
+        |
+    
+        (df[col] > upper_bound)]
+    print("\n" + "=" * 50)
+
+    print(col)
+
+    print("=" * 50)
+
+    print(f"Remaining Outliers: {len(outliers)}")
+    
+    
+# ============================================
+
+# Step 39: Save Outlier-Handled Dataset
+
+# ============================================
+
+# Purpose:
+
+# Save dataset after
+
+# outlier treatment.
+
+df.to_csv( "data/processed/outliers_handled.csv",index=False)
+
+print("\nDataset saved successfully.")
