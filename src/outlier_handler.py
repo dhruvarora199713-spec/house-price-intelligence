@@ -108,7 +108,7 @@ print(summary_stats)
 # Select columns where outliers
 # are most likely to exist.
 
-candidate_columns = [
+outlier_candidate_features = [
     "SalePrice",
     "LotArea",
     "GrLivArea",
@@ -119,7 +119,7 @@ candidate_columns = [
 
 print("\nCandidate Columns For Outlier Analysis:\n")
 
-for col in candidate_columns:
+for col in outlier_candidate_features:
     print(col)
     
     
@@ -134,7 +134,7 @@ for col in candidate_columns:
 import matplotlib.pyplot as plt 
 import seaborn as sns 
 
-for col in candidate_columns:
+for col in outlier_candidate_features:
     plt.figure(figsize=(8,4))
     sns.boxplot(
         x=df[col]
@@ -161,7 +161,7 @@ for col in candidate_columns:
 # Calculate lower and upper bounds
 # used to detect SalePrice outliers.
 
-for col in candidate_columns:
+for col in outlier_candidate_features:
 
     Q1, Q3, IQR, lower_bound, upper_bound = ( calculate_iqr_bounds(df, col))
 
@@ -189,7 +189,7 @@ for col in candidate_columns:
 # Count outliers for each
 # candidate feature.
 
-for col in candidate_columns :
+for col in outlier_candidate_features :
 
     Q1, Q3, IQR, lower_bound, upper_bound = (
         calculate_iqr_bounds(df,col)
