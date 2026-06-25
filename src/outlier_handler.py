@@ -199,7 +199,6 @@ for col in candidate_columns :
     print(
 
         f"Percentage: {(len(outliers)/len(df))*100:.2f}%"
-
     )
     
 # ============================================
