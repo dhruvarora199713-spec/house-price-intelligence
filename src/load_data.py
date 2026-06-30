@@ -1,15 +1,11 @@
-# ============================================
-# Load Dataset Utility
-# ============================================
-
-# Purpose:
-
-# Centralized dataset loading function.
-
 import pandas as pd
 
-def load_data(path):
+def load_raw_data(path):
+    return pd.read_csv(path)
 
-    df = pd.read_csv(path)
 
-    return df
+def load_processed_data(path):
+    return pd.read_csv(
+        path,
+        keep_default_na=False
+    )

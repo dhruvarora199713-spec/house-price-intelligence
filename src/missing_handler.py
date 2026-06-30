@@ -28,7 +28,8 @@ actual_missing_columns = [
 
 import pandas as pd 
 # Load Dataset
-df=pd.read_csv("data/raw/train.csv")
+from load_data import load_raw_data
+df = load_raw_data("data/raw/train.csv")
 
 # Calculate misssing percentages 
 missing_percentage=(

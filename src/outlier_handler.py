@@ -61,8 +61,8 @@ def calculate_iqr_bounds(df, column):
 # Purpose:
 # Load dataset after missing value handling.
 
-from load_data import load_data 
-df = load_data("data/processed/missing_values_handled.csv")
+from load_data import load_processed_data 
+df = load_processed_data("data/processed/missing_values_handled.csv")
 
 print("\nDataset Shape")
 print(df.shape)
@@ -249,26 +249,32 @@ for feature , strategy in outlier_treatment.items() :
 # ============================================
 
 # Purpose:
-# Cap outlier values using
-# the IQR lower and upper bounds.
+# Cap only extreme upper
+# outliers while preserving
+# meaningful lower values.
 
-features_to_cap =[
+features_to_cap = [
+
     "LotArea",
     "GrLivArea",
     "GarageArea",
     "TotalBsmtSF",
     "1stFlrSF"
+
 ]
 
 for col in features_to_cap:
-    Q1,Q2,IQR,lower_bound,upper_bound =(calculate_iqr_bounds(df,col))
-    df[col]=(
+
+    Q1, Q3, IQR, lower_bound, upper_bound = (
+        calculate_iqr_bounds(df, col)
+    )
+
+    df[col] = (
+
         df[col]
-        .clip(
-            lower=lower_bound,
-            upper=upper_bound
-        )
-     )
+        .clip(upper=upper_bound)
+    )
+
 print("\nOutlier capping completed successfully.")
 
 
@@ -283,11 +289,8 @@ print("\nOutlier capping completed successfully.")
 for col in features_to_cap :
     Q1,Q2,IQR, lower_bound,upper_bound = (calculate_iqr_bounds(df,col))
     outliers = df[
-        (df[col] < lower_bound)
-    
-        |
-    
-        (df[col] > upper_bound)]
+        (df[col] > upper_bound)
+    ]
     print("\n" + "=" * 50)
 
     print(col)
