@@ -844,11 +844,11 @@ This project served as a practical introduction to building an end-to-end Machin
 
 **Dhruv Arora**
 
-📧 Email: *Your Email*
+📧 Email: dhruvarora1997.13@gmail.com
 
 🔗 GitHub: https://github.com/dhruvarora199713-spec
 
-💼 LinkedIn: *Your LinkedIn Profile*
+💼 LinkedIn: https://www.linkedin.com/in/dhruvv-kumar-b35214355/
 
 ---
 
